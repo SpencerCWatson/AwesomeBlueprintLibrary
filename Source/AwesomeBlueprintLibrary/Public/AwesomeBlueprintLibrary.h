@@ -1,4 +1,4 @@
-// Copyright 2022 Just2Devs. All Rights Reserved.
+
 
 #pragma once
 #include "Modules/ModuleManager.h"

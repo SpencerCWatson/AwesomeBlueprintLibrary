@@ -8,9 +8,9 @@
 
 bool UAwesomeBL::GetPrimaryAssetData(const FPrimaryAssetId& PrimaryAssetId, FAssetData& AssetData)
 {
-	if (UAssetManager* Manager = UAssetManager::GetIfValid())
+	if (UAssetManager* AssetManager = UAssetManager::GetIfValid())
 	{
-		return Manager->GetPrimaryAssetData(PrimaryAssetId, AssetData);
+		return AssetManager->GetPrimaryAssetData(PrimaryAssetId, AssetData);
 	}
 	
 	AssetData = FAssetData();
@@ -20,16 +20,16 @@ bool UAwesomeBL::GetPrimaryAssetData(const FPrimaryAssetId& PrimaryAssetId, FAss
 void UAwesomeBL::AsyncLoadPrimaryAsset(const FPrimaryAssetId& AssetToLoad, const TArray<FName>& LoadBundles,
 	const FAsyncLoadPrimaryAssetSignature& OnLoad)
 {
-	if (UAssetManager* Manager = UAssetManager::GetIfValid())
+	if (UAssetManager* AssetManager = UAssetManager::GetIfValid())
 	{
 		// Lambda start
 		FStreamableDelegate OnLoadDelegate = FStreamableDelegate::CreateLambda([AssetToLoad, OnLoad]()
 		{
 			FAssetData AssetData;
 			//Check if the PrimaryAsset is loaded
-			if(UAssetManager* Manager = UAssetManager::GetIfValid())
+			if(UAssetManager* AssetManager = UAssetManager::GetIfValid())
 			{
-				if(UObject* LoadedAsset = Manager->GetPrimaryAssetObject(AssetToLoad))
+				if(UObject* LoadedAsset = AssetManager->GetPrimaryAssetObject(AssetToLoad))
 				{
 					OnLoad.ExecuteIfBound(AssetToLoad, LoadedAsset);
 				}
@@ -37,23 +37,23 @@ void UAwesomeBL::AsyncLoadPrimaryAsset(const FPrimaryAssetId& AssetToLoad, const
 		});
 		// Lambda end
 		
-		Manager->LoadPrimaryAsset(AssetToLoad, LoadBundles, OnLoadDelegate);
+		AssetManager->LoadPrimaryAsset(AssetToLoad, LoadBundles, OnLoadDelegate);
 	}
 }
 
 void UAwesomeBL::AsyncLoadPrimaryAssetWithGameplayTags(const FPrimaryAssetId& AssetToLoad, const TArray<FName>& LoadBundles,
 	const FAsyncLoadPrimaryAssetWithGameplayTagsSignature& OnLoad, const FGameplayTagContainer& GameplayTags)
 {
-	if (UAssetManager* Manager = UAssetManager::GetIfValid())
+	if (UAssetManager* AssetManager = UAssetManager::GetIfValid())
 	{
 		// Lambda start
 		FStreamableDelegate OnLoadDelegate = FStreamableDelegate::CreateLambda([AssetToLoad, OnLoad, GameplayTags]()
 		{
 			FAssetData AssetData;
 			//Check if the PrimaryAsset is loaded
-			if(UAssetManager* Manager = UAssetManager::GetIfValid())
+			if(UAssetManager* AssetManager = UAssetManager::GetIfValid())
 			{
-				if(UObject* LoadedAsset = Manager->GetPrimaryAssetObject(AssetToLoad))
+				if(UObject* LoadedAsset = AssetManager->GetPrimaryAssetObject(AssetToLoad))
 				{
 					OnLoad.ExecuteIfBound(AssetToLoad, LoadedAsset, GameplayTags);
 				}
@@ -61,28 +61,27 @@ void UAwesomeBL::AsyncLoadPrimaryAssetWithGameplayTags(const FPrimaryAssetId& As
 		});
 		// Lambda end
 		
-		Manager->LoadPrimaryAsset(AssetToLoad, LoadBundles, OnLoadDelegate);
+		AssetManager->LoadPrimaryAsset(AssetToLoad, LoadBundles, OnLoadDelegate);
 	}
 	
 }
 
-void UAwesomeBL::AsyncLoadPrimaryAssets(const TArray<FPrimaryAssetId>& AssetsToLoad, const TArray<FName>& LoadBundles,
-                                                const FAsyncLoadPrimaryAssetsSignature& OnLoad)
+void UAwesomeBL::AsyncLoadPrimaryAssetList(const TArray<FPrimaryAssetId>& AssetsToLoad, const TArray<FName>& LoadBundles, const FAsyncLoadPrimaryAssetListSignature& OnLoad)
 {
-	if (UAssetManager* Manager = UAssetManager::GetIfValid())
+	if (UAssetManager* AssetManager = UAssetManager::GetIfValid())
 	{
 
 		// Lambda Start
 		FStreamableDelegate OnLoadDelegate = FStreamableDelegate::CreateLambda([AssetsToLoad, OnLoad]()
 		{
-			if (UAssetManager* Manager = UAssetManager::GetIfValid())
+			if (UAssetManager* AssetManager = UAssetManager::GetIfValid())
 			{
 				TArray<FPrimaryAssetId> LoadedPrimaryAssets;
 				TArray<UObject*> LoadedAssets;
 				
 				for (FPrimaryAssetId AssetId : AssetsToLoad)
 				{
-					if(UObject* LoadedAsset= Manager->GetPrimaryAssetObject(AssetId))
+					if(UObject* LoadedAsset = AssetManager->GetPrimaryAssetObject(AssetId))
 					{
 						LoadedPrimaryAssets.Emplace(AssetId);
 						LoadedAssets.Emplace(LoadedAsset);
@@ -97,27 +96,26 @@ void UAwesomeBL::AsyncLoadPrimaryAssets(const TArray<FPrimaryAssetId>& AssetsToL
 		});
 		//Lambda End
 		
-		Manager->LoadPrimaryAssets(AssetsToLoad, LoadBundles, OnLoadDelegate);
+		AssetManager->LoadPrimaryAssets(AssetsToLoad, LoadBundles, OnLoadDelegate);
 	}
 }
 
-void UAwesomeBL::AsyncLoadPrimaryAssetsWithGameplayTags(const TArray<FPrimaryAssetId>& AssetsToLoad, const TArray<FName>& LoadBundles,
-	const FAsyncLoadPrimaryAssetsWithGameplayTagsSignature& OnLoad, const FGameplayTagContainer& GameplayTags)
+void UAwesomeBL::AsyncLoadPrimaryAssetListWithGameplayTags(const TArray<FPrimaryAssetId>& AssetsToLoad, const TArray<FName>& LoadBundles, const FAsyncLoadPrimaryAssetListWithGameplayTagsSignature& OnLoad, const FGameplayTagContainer& GameplayTags)
 {
-	if (UAssetManager* Manager = UAssetManager::GetIfValid())
+	if (UAssetManager* AssetManager = UAssetManager::GetIfValid())
 	{
 
 		// Lambda Start
 		FStreamableDelegate OnLoadDelegate = FStreamableDelegate::CreateLambda([AssetsToLoad, OnLoad, GameplayTags]()
 		{
-			if (UAssetManager* Manager = UAssetManager::GetIfValid())
+			if (UAssetManager* AssetManager = UAssetManager::GetIfValid())
 			{
 				TArray<FPrimaryAssetId> LoadedPrimaryAssets;
 				TArray<UObject*> LoadedAssets;
 				
 				for (FPrimaryAssetId AssetId : AssetsToLoad)
 				{
-					if(UObject* LoadedAsset= Manager->GetPrimaryAssetObject(AssetId))
+					if(UObject* LoadedAsset= AssetManager->GetPrimaryAssetObject(AssetId))
 					{
 						LoadedPrimaryAssets.Emplace(AssetId);
 						LoadedAssets.Emplace(LoadedAsset);
@@ -132,13 +130,13 @@ void UAwesomeBL::AsyncLoadPrimaryAssetsWithGameplayTags(const TArray<FPrimaryAss
 		});
 		//Lambda End
 		
-		Manager->LoadPrimaryAssets(AssetsToLoad, LoadBundles, OnLoadDelegate);
+		AssetManager->LoadPrimaryAssets(AssetsToLoad, LoadBundles, OnLoadDelegate);
 	}
 }
 
 void UAwesomeBL::AsyncLoadAsset(TSoftObjectPtr<UObject> AssetToLoad, const FAsyncLoadAssetSignature& OnLoadDelegate)
 {
-	FStreamableManager& AssetLoader = UAssetManager::GetStreamableManager();
+	FStreamableManager& StreamableManager = UAssetManager::GetStreamableManager();
 	FStreamableDelegate OnLoad = FStreamableDelegate::CreateLambda([AssetToLoad, OnLoadDelegate]()
 	{
 		if(UObject* LoadedAsset = AssetToLoad.Get())
@@ -146,12 +144,12 @@ void UAwesomeBL::AsyncLoadAsset(TSoftObjectPtr<UObject> AssetToLoad, const FAsyn
 			OnLoadDelegate.ExecuteIfBound(LoadedAsset);
 		}
 	});
-	AssetLoader.RequestAsyncLoad(AssetToLoad.ToSoftObjectPath(), OnLoad);
+	StreamableManager.RequestAsyncLoad(AssetToLoad.ToSoftObjectPath(), OnLoad);
 }
 
-void UAwesomeBL::AsyncLoadAssetWithTags(TSoftObjectPtr<UObject> AssetToLoad, const TArray<FName>& Tags, const FAsyncLoadAssetWithNameTagsSignature& OnLoadDelegate)
+void UAwesomeBL::AsyncLoadAssetWithNameTags(TSoftObjectPtr<UObject> AssetToLoad, const TArray<FName>& Tags, const FAsyncLoadAssetWithNameTagsSignature& OnLoadDelegate)
 {
-	FStreamableManager& AssetLoader = UAssetManager::GetStreamableManager();
+	FStreamableManager& StreamableManager = UAssetManager::GetStreamableManager();
 	FStreamableDelegate OnLoad = FStreamableDelegate::CreateLambda([AssetToLoad, Tags, OnLoadDelegate]()
 	{
 		if(UObject* LoadedAsset = AssetToLoad.Get())
@@ -159,18 +157,18 @@ void UAwesomeBL::AsyncLoadAssetWithTags(TSoftObjectPtr<UObject> AssetToLoad, con
 			OnLoadDelegate.ExecuteIfBound(LoadedAsset, Tags);
 		}
 	});
-	AssetLoader.RequestAsyncLoad(AssetToLoad.ToSoftObjectPath(), OnLoad);
+	StreamableManager.RequestAsyncLoad(AssetToLoad.ToSoftObjectPath(), OnLoad);
 }
 
-void UAwesomeBL::AsyncLoadAssets(const TArray<TSoftObjectPtr<UObject>>& AssetsToLoad, const FAsyncLoadAssetsSignature& OnLoadDelegate)
+void UAwesomeBL::AsyncLoadAssetList(const TArray<TSoftObjectPtr<UObject>>& AssetListToLoad, const FAsyncLoadAssetListSignature& OnLoadDelegate)
 {
-	FStreamableManager& AssetLoader = UAssetManager::GetStreamableManager();
+	FStreamableManager& StreamableManager = UAssetManager::GetStreamableManager();
 	// Lambda start
-	FStreamableDelegate OnLoad = FStreamableDelegate::CreateLambda([AssetsToLoad, OnLoadDelegate]()
+	FStreamableDelegate OnLoad = FStreamableDelegate::CreateLambda([AssetListToLoad, OnLoadDelegate]()
 	{
 		// Verify load and send back the object pointers
 		TArray<UObject*> LoadedAssets;
-		for (TSoftObjectPtr<UObject> Asset: AssetsToLoad)
+		for (TSoftObjectPtr<UObject> Asset: AssetListToLoad)
 		{
 			if (UObject* LoadedAsset = Asset.Get())
 			{
@@ -184,25 +182,25 @@ void UAwesomeBL::AsyncLoadAssets(const TArray<TSoftObjectPtr<UObject>>& AssetsTo
 
 	//Make array of valid SoftObjectPaths for the request.
 	TArray<FSoftObjectPath> SoftObjectPaths;
-	for(TSoftObjectPtr<UObject> SoftObjectPointer : AssetsToLoad)
+	for(TSoftObjectPtr<UObject> SoftObjectPointer : AssetListToLoad)
 	{
 		if(!SoftObjectPointer.IsNull())
 		{
 			SoftObjectPaths.Add(SoftObjectPointer.ToSoftObjectPath());
 		}
 	}
-	AssetLoader.RequestAsyncLoad(SoftObjectPaths, OnLoad);
+	StreamableManager.RequestAsyncLoad(SoftObjectPaths, OnLoad);
 }
 
-void UAwesomeBL::AsyncLoadAssetsWithTags(const TArray<TSoftObjectPtr<UObject>>& AssetsToLoad, const TArray<FName>& Tags, const FAsyncLoadAssetsWithNameTagsSignature& OnLoadDelegate)
+void UAwesomeBL::AsyncLoadAssetListWithNameTags(const TArray<TSoftObjectPtr<UObject>>& AssetListToLoad, const TArray<FName>& Tags, const FAsyncLoadAssetListWithNameTagsSignature& OnLoadDelegate)
 {
-	FStreamableManager& AssetLoader = UAssetManager::GetStreamableManager();
+	FStreamableManager& StreamableManager = UAssetManager::GetStreamableManager();
 
 	//Lambda start
-	FStreamableDelegate OnLoad = FStreamableDelegate::CreateLambda([AssetsToLoad, Tags, OnLoadDelegate]()
+	FStreamableDelegate OnLoad = FStreamableDelegate::CreateLambda([AssetListToLoad, Tags, OnLoadDelegate]()
 	{
 		TArray<UObject*> LoadedAssets;
-		for (TSoftObjectPtr<UObject> Asset: AssetsToLoad)
+		for (TSoftObjectPtr<UObject> Asset: AssetListToLoad)
 		{
 			if (UObject* LoadedObject = Asset.Get())
 			{
@@ -216,7 +214,7 @@ void UAwesomeBL::AsyncLoadAssetsWithTags(const TArray<TSoftObjectPtr<UObject>>& 
 
 	//Make array of valid SoftObjectPaths for the request.
 	TArray<FSoftObjectPath> SoftObjectPaths;
-	for(TSoftObjectPtr<UObject> SoftObjectPointer : AssetsToLoad)
+	for(TSoftObjectPtr<UObject> SoftObjectPointer : AssetListToLoad)
 	{
 		if(!SoftObjectPointer.IsNull())
 		{
@@ -224,7 +222,7 @@ void UAwesomeBL::AsyncLoadAssetsWithTags(const TArray<TSoftObjectPtr<UObject>>& 
 		}
 	}
 	
-	AssetLoader.RequestAsyncLoad(SoftObjectPaths, OnLoad);
+	StreamableManager.RequestAsyncLoad(SoftObjectPaths, OnLoad);
 }
 
 void UAwesomeBL::NameArrayToStringArray(const TArray<FName>& NameArray, TArray<FString>& StringArray)
