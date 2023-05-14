@@ -71,10 +71,10 @@ class AWESOMEBLUEPRINTLIBRARY_API UAwesomeBL : public UBlueprintFunctionLibrary
 	//~~~~	Loading Helpers	~~~~
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-	DECLARE_DYNAMIC_DELEGATE_OneParam(FAsyncLoadAssetSignature, UObject*, Asset);
-	DECLARE_DYNAMIC_DELEGATE_TwoParams(FAsyncLoadAssetWithNameTagsSignature, UObject*, Asset, const TArray<FName>&, Tags);
-	DECLARE_DYNAMIC_DELEGATE_OneParam(FAsyncLoadAssetListSignature, const TArray<UObject*>&, Assets);
-	DECLARE_DYNAMIC_DELEGATE_TwoParams(FAsyncLoadAssetListWithNameTagsSignature, const TArray<UObject*>&, Assets, const TArray<FName>&, Tags);
+	DECLARE_DYNAMIC_DELEGATE_OneParam(FAsyncLoadAssetSignature, UObject*, LoadedAsset);
+	DECLARE_DYNAMIC_DELEGATE_TwoParams(FAsyncLoadAssetWithNameTagsSignature, UObject*, LoadedAsset, const TArray<FName>&, Tags);
+	DECLARE_DYNAMIC_DELEGATE_OneParam(FAsyncLoadAssetListSignature, const TArray<UObject*>&, LoadedAssets);
+	DECLARE_DYNAMIC_DELEGATE_TwoParams(FAsyncLoadAssetListWithNameTagsSignature, const TArray<UObject*>&, LoadedAssets, const TArray<FName>&, Tags);
 
 	/**
 	 * Async load a SoftObjectPtr with a bindable delegate.
@@ -145,9 +145,9 @@ class AWESOMEBLUEPRINTLIBRARY_API UAwesomeBL : public UBlueprintFunctionLibrary
 	UFUNCTION(BlueprintPure, Category="DataHelpers")
 	static TArray<int32> FloatArrayToIntArray(const TArray<float>& FloatArray);
 	
-	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	//~~~~~ Basics
-	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	//~~~~~~~~~~~~~~~~~~
+	//~~~~~ Basics	~~~~
+	//~~~~~~~~~~~~~~~~~~
 
 	/**
 	 *	Quit game without a need for a player controller.
@@ -170,7 +170,7 @@ class AWESOMEBLUEPRINTLIBRARY_API UAwesomeBL : public UBlueprintFunctionLibrary
 	 *	@return						GameMode
 	 */
 	UFUNCTION(BlueprintPure, Category="BasicHelpers", meta=(WorldContext="WorldContextObject", CallableWithoutWorldContext))
-	static  AGameModeBase* GetGameMode(const UObject* WorldContextObject) { return UGameplayStatics::GetGameMode(WorldContextObject); }
+	static AGameModeBase* GetGameMode(const UObject* WorldContextObject) { return UGameplayStatics::GetGameMode(WorldContextObject); }
 
 	/**
 	 *	Returns the current GameStateBase or Null if it can't be retrieved.
@@ -178,7 +178,18 @@ class AWESOMEBLUEPRINTLIBRARY_API UAwesomeBL : public UBlueprintFunctionLibrary
 	 *	@return						GameState
 	 */
 	UFUNCTION(BlueprintPure, Category="BasicHelpers", meta=(WorldContext="WorldContextObject", CallableWithoutWorldContext))
-	static  AGameStateBase* GetGameState(const UObject* WorldContextObject) { return UGameplayStatics::GetGameState(WorldContextObject);}
-	
+	static AGameStateBase* GetGameState(const UObject* WorldContextObject) { return UGameplayStatics::GetGameState(WorldContextObject);}
+
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	//~~~~~ GameInstance Helpers	~~~~
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	/** Registers an object to keep alive as long as the GameInstance of the world it lives in is alive */
+	UFUNCTION(BlueprintCallable, Category="GameInstanceHelpers")
+	static void RegisterWithGameInstance(UObject* Object);
+
+	/** Remove a referenced object from the GameInstance of the world it lives in, this will allow it to GC out */
+	UFUNCTION(BlueprintCallable, Category="GameInstanceHelpers")
+	static void UnegisterWithGameInstance(UObject* Object);
 };
 

@@ -268,7 +268,21 @@ void UAwesomeBL::QuitGame()
 	FPlatformMisc::RequestExit(false);
 }
 
+void UAwesomeBL::RegisterWithGameInstance(UObject* Object)
+{
+	if(UGameInstance* GameInstance = UGameplayStatics::GetGameInstance(Object))
+	{
+		GameInstance->RegisterReferencedObject(Object);
+	}
+}
 
+void UAwesomeBL::UnegisterWithGameInstance(UObject* Object)
+{
+	if(UGameInstance* GameInstance = UGameplayStatics::GetGameInstance(Object))
+	{
+		GameInstance->UnregisterReferencedObject(Object);
+	}
+}
 
 
 
