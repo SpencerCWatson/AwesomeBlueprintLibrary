@@ -22,7 +22,8 @@ public class AwesomeBlueprintLibrary : ModuleRules
 				"CoreUObject",
 				"Engine",
 				"Slate",
-				"SlateCore"
+				"SlateCore",
+				"InputCore"
 			}
 			);
 	}
